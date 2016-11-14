@@ -1,9 +1,9 @@
 (function() {
-	function HomeCtrl(){
+	function LandingCtrl(){
 		console.log("Home");
 	}
 
 	angular
 		.module('blocmetrics')
-		.controller('HomeCtrl', HomeCtrl);
+		.controller('LandingCtrl', LandingCtrl);
 })();
