@@ -18,8 +18,12 @@
 			})
 			.state('graphs', {
 				url: '/graphs',
+				templateUrl: '/templates/graphs.html'
+			})
+			.state('graph', {
+				templateUrl: '/templates/graph.html',
 				controller: 'GraphCtrl as graph',
-				templateUrl: '/templates/graph.html'
+				url: '/graphs/:graphType'
 			});
 	}
 
