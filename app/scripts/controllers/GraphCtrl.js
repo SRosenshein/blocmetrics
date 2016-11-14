@@ -1,9 +1,9 @@
 (function() {
-	function GraphCtrl () {
-
+	function GraphCtrl($stateParams) {
+		this.graphType = $stateParams.graphType;
 	}
 
 	angular
 		.module('blocmetrics')
-		.controller('GraphCtrl', GraphCtrl);
+		.controller('GraphCtrl', ['$stateParams', GraphCtrl]);
 })();
