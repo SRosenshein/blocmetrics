@@ -28,7 +28,7 @@
 	}
 
 	angular
-		.module("blocmetrics", ["firebase", "ui.router", "ui.bootstrap"])
+		.module("blocmetrics", ["firebase", "ui.router", "ui.bootstrap", "nvd3"])
 		.config(config);
 
 })();
