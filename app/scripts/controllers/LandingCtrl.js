@@ -1,6 +1,5 @@
 (function() {
 	function LandingCtrl(){
-		console.log("Home");
 	}
 
 	angular

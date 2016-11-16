@@ -3,6 +3,19 @@
 	function GraphCtrl($stateParams, $firebaseArray, $scope) {
 		var graphType = $stateParams.graphType;
 		var ref = firebase.database().ref();
+		var songPlays = $firebaseArray(ref.child("songPlays"));
+
+		var countSongPlays = function(songPlaysArray) {
+			var data = {};
+			angular.forEach(songPlaysArray, function(song) {
+				data[song.title] ? data[song.title] += 1 : data[song.title] = 1;		
+			});
+			var pieData = [];
+			for(var title in data) {
+				pieData.push({key: title, y: data[title]});
+			}
+			return pieData;		
+		};
 
 		if (graphType === "pie"){
 			$scope.options = {
@@ -23,39 +36,16 @@
 							left: 0
 						}
 					}
+				},
+				title: {
+					enable: true,
+					text: "Song Play Count",
+					className: "h2"
 				}
 			};
-
-	    $scope.data = [
-	    {
-	        key: "One",
-	        y: 5
-	    },
-	    {
-	        key: "Two",
-	        y: 2
-	    },
-	    {
-	        key: "Three",
-	        y: 9
-	    },
-	    {
-	        key: "Four",
-	        y: 7
-	    },
-	    {
-	        key: "Five",
-	        y: 4
-	    },
-	    {
-	        key: "Six",
-	        y: 3
-	    },
-	    {
-	        key: "Seven",
-	        y: .5
-	    }
-			];
+			songPlays.$loaded().then(function(fdata) {
+				$scope.data = countSongPlays(fdata);
+			});
 		}
 	}
 
