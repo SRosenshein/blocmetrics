@@ -4,6 +4,8 @@
 		var graphType = $stateParams.graphType;
 		var ref = firebase.database().ref();
 		var songPlays = $firebaseArray(ref.child("songPlays"));
+    var pageViews = ref.child("pageViews");
+    var landingViews = $firebaseArray(pageViews.orderByChild("name").equalTo("landing"));
 
 		// Counts number of times each song was played and formats into d3 data array
 		var countSongPlays = function(songPlaysArray) {
@@ -17,6 +19,47 @@
 			}
 			return pieData;		
 		};
+
+    // Generate array of dates between first date in pageViews array and current date to populate x-axis
+    var getDateRange = function(startDate) {
+      var s = moment(startDate, "MM/DD/YYYY").format();
+      var e = moment().format(); //end date (now)
+      var a = [];
+      var days = moment(e).diff(s, "days");
+      
+      for(var i = 0; i <= days; i++){
+        a.push(s);
+        s = moment(s).add(1, "days").format();
+      }
+      return a;
+    };
+
+    // Counts number of page viewsof each page
+    var countPageViews = function(views) {
+      var data = {};
+      var allDates = getDateRange(views[0].viewedAt);
+      angular.forEach(allDates, function(date) {
+        data[date] = 0;
+      });
+      angular.forEach(views, function(view) {
+        var date = moment(view["viewedAt"], "MM/DD/YYYY").format();
+        data[date] += 1;   
+      });
+
+      var lineData = [];
+      for(var day in data) {
+        var d = moment(day).format('x'); 
+        lineData.push({x: d, y: data[day]});
+      }
+      
+      return [
+        {
+          values: lineData,
+          key: 'Landing Page',
+          color: "#EE0000"
+        }
+      ];
+    };
 
 		if (graphType === "pie"){
 			$scope.options = {
@@ -51,94 +94,60 @@
 			$scope.options = {
         chart: {
           type: 'lineChart',
-          height: 450,
+          height: 500,
           margin : {
-              top: 20,
-              right: 20,
-              bottom: 40,
-              left: 55
+            top: 20,
+            right: 20,
+            bottom: 40,
+            left: 55
           },
           x: function(d){ return d.x; },
           y: function(d){ return d.y; },
+          showValues: true,
           useInteractiveGuideline: true,
           dispatch: {
-              stateChange: function(e){ console.log("stateChange"); },
-              changeState: function(e){ console.log("changeState"); },
-              tooltipShow: function(e){ console.log("tooltipShow"); },
-              tooltipHide: function(e){ console.log("tooltipHide"); }
+            stateChange: function(e){ console.log("stateChange"); },
+            changeState: function(e){ console.log("changeState"); },
+            tooltipShow: function(e){ console.log("tooltipShow"); },
+            tooltipHide: function(e){ console.log("tooltipHide"); }
           },
           xAxis: {
-              axisLabel: 'Time (ms)'
+            axisLabel: 'Date',
+            tickFormat: function(d) {
+              return d3.time.format('%x')(new Date(d));
+            },
+            rotateLabels: 25,
+            showMaxMin: false,
+            fontSize: 12
           },
           yAxis: {
-              axisLabel: 'Voltage (v)',
-              tickFormat: function(d){
-                  return d3.format('.02f')(d);
-              },
-              axisLabelDistance: -10
+            axisLabel: 'Number of Page Views',
+            axisLabelDistance: -10,
+            showMaxMin: true,
+            fontSize: 14
+          },
+          yDomain: [0, 20],
+          interactiveLayer: {
+            toolTip: {
+              headerFormatter: function(d) {
+                return d3.time.format('%x')(new Date(d));
+              }
+            }
           },
           callback: function(chart){
-              console.log("!!! lineChart callback !!!");
+            console.log("!!! lineChart callback !!!");
           }
         },
         title: {
-           enable: true,
-           text: 'Title for Line Chart'
-        },
-        subtitle: {
-           enable: true,
-           text: 'Subtitle for simple line chart. Lorem ipsum dolor sit amet, at eam blandit sadipscing, vim adhuc sanctus disputando ex, cu usu affert alienum urbanitas.',
-           css: {
-               'text-align': 'center',
-               'margin': '10px 13px 0px 7px'
-           }
-        },
-        caption: {
-           enable: true,
-           html: '<b>Figure 1.</b> Lorem ipsum dolor sit amet, at eam blandit sadipscing, <span style="text-decoration: underline;">vim adhuc sanctus disputando ex</span>, cu usu affert alienum urbanitas. <i>Cum in purto erat, mea ne nominavi persecuti reformidans.</i> Docendi blandit abhorreant ea has, minim tantas alterum pro eu. <span style="color: darkred;">Exerci graeci ad vix, elit tacimates ea duo</span>. Id mel eruditi fuisset. Stet vidit patrioque in pro, eum ex veri verterem abhorreant, id unum oportere intellegam nec<sup>[1, <a href="https://github.com/krispo/angular-nvd3" target="_blank">2</a>, 3]</sup>.',
-           css: {
-              'text-align': 'justify',
-              'margin': '10px 13px 0px 7px'
-          	}
+          enable: true,
+          text: 'Number of Page Views'
         }
-        };
-
-        $scope.data = sinAndCos();
-
-        /*Random Data Generator */
-        function sinAndCos() {
-            var sin = [],sin2 = [],
-                cos = [];
-
-            //Data is represented as an array of {x,y} pairs.
-            for (var i = 0; i < 100; i++) {
-                sin.push({x: i, y: Math.sin(i/10)});
-                sin2.push({x: i, y: i % 10 == 5 ? null : Math.sin(i/10) *0.25 + 0.5});
-                cos.push({x: i, y: .5 * Math.cos(i/10+ 2) + Math.random() / 10});
-            }
-
-            //Line chart data should be sent as an array of series objects.
-            return [
-                {
-                    values: sin,      //values - represents the array of {x,y} data points
-                    key: 'Sine Wave', //key  - the name of the series.
-                    color: '#ff7f0e'  //color - optional: choose your own line color.
-                },
-                {
-                    values: cos,
-                    key: 'Cosine Wave',
-                    color: '#2ca02c'
-                },
-                {
-                    values: sin2,
-                    key: 'Another sine wave',
-                    color: '#7777ff',
-                    area: true      //area - set to true if you want this line to turn into a filled area chart.
-                }
-            ];
-        };
-		}
-	}
+      };
+      landingViews.$loaded().then(function(fdata) {
+        $scope.data = countPageViews(fdata);
+      });
+		} // if {}
+	} // function GraphCtrl {}
 
 	angular
 		.module('blocmetrics')
