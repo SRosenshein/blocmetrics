@@ -6,6 +6,8 @@
 		var songPlays = $firebaseArray(ref.child("songPlays"));
     var pageViews = ref.child("pageViews");
     var landingViews = $firebaseArray(pageViews.orderByChild("name").equalTo("landing"));
+    var collectionViews = $firebaseArray(pageViews.orderByChild("name").equalTo("collection"));
+    var albumViews = $firebaseArray(pageViews.orderByChild("name").equalTo("album"));
 
 		// Counts number of times each song was played and formats into d3 data array
 		var countSongPlays = function(songPlaysArray) {
@@ -51,14 +53,7 @@
         var d = moment(day).format('x'); 
         lineData.push({x: d, y: data[day]});
       }
-      
-      return [
-        {
-          values: lineData,
-          key: 'Landing Page',
-          color: "#EE0000"
-        }
-      ];
+      return lineData;
     };
 
 		if (graphType === "pie"){
@@ -126,7 +121,7 @@
             showMaxMin: true,
             fontSize: 14
           },
-          yDomain: [0, 20],
+          yDomain: [0, 14],
           interactiveLayer: {
             toolTip: {
               headerFormatter: function(d) {
@@ -140,11 +135,19 @@
         },
         title: {
           enable: true,
-          text: 'Number of Page Views'
+          text: 'Number of Page Views',
+          className: "h2"
         }
       };
+      $scope.data = [];
       landingViews.$loaded().then(function(fdata) {
-        $scope.data = countPageViews(fdata);
+        $scope.data.push({values: countPageViews(fdata), key: "Landing Page", color: "#EE0000"});
+      });
+      collectionViews.$loaded().then(function(fdata) {
+        $scope.data.push({values: countPageViews(fdata), key: "Collection Page", color: "#00EE00"});
+      });
+      albumViews.$loaded().then(function(fdata) {
+        $scope.data.push({values: countPageViews(fdata), key: "Album Page", color: "#0000EE"});
       });
 		} // if {}
 	} // function GraphCtrl {}
