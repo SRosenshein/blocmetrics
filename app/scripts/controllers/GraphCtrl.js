@@ -57,6 +57,7 @@
     };
 
 		if (graphType === "pie"){
+      var colors = ["green", "red", "purple", "pink", "blue"];
 			$scope.options = {
 				chart: {
 					type: 'pieChart',
@@ -67,6 +68,9 @@
 					duration: 500,
 					labelThreshold: 0.01,
 					labelSunbeamLayout: true,
+          callback: function () {
+            d3.selectAll('.nv-pieLabels text').style('fill', 'white');
+          },
 					legend: {
 						margin: {
 							top: 5,
@@ -74,7 +78,15 @@
 							bottom: 5,
 							left: 0
 						}
-					}
+					},
+          tooltip: {
+            valueFormatter: function(d) {
+              return d3.format('d')(d);
+            }
+          },
+          color: function(d, i) {
+            return (d.data && d.data.color) || colors[i % colors.length];
+          }
 				},
 				title: {
 					enable: true,
