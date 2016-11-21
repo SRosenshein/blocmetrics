@@ -1,6 +1,6 @@
 (function() {
 	'use strict';
-	function GraphCtrl($stateParams, $firebaseArray, $scope) {
+	function GraphCtrl($stateParams, $firebaseArray, $scope, Charts) {
 		var graphType = $stateParams.graphType;
 		var ref = firebase.database().ref();
 		var songPlays = $firebaseArray(ref.child("songPlays"));
@@ -8,19 +8,6 @@
     var landingViews = $firebaseArray(pageViews.orderByChild("name").equalTo("landing"));
     var collectionViews = $firebaseArray(pageViews.orderByChild("name").equalTo("collection"));
     var albumViews = $firebaseArray(pageViews.orderByChild("name").equalTo("album"));
-
-		// Counts number of times each song was played and formats into d3 data array
-		var countSongPlays = function(songPlaysArray) {
-			var data = {};
-			angular.forEach(songPlaysArray, function(song) {
-				data[song.title] ? data[song.title] += 1 : data[song.title] = 1;		
-			});
-			var pieData = [];
-			for(var title in data) {
-				pieData.push({key: title, y: data[title]});
-			}
-			return pieData;		
-		};
 
     // Generate array of dates between first date in pageViews array and current date to populate x-axis
     var getDateRange = function(startDate) {
@@ -57,45 +44,9 @@
     };
 
 		if (graphType === "pie"){
-      var colors = ["green", "red", "purple", "pink", "blue"];
-			$scope.options = {
-				chart: {
-					type: 'pieChart',
-					height: 500,
-					x: function(d){return d.key;},
-					y: function(d){return d.y;},
-					showLabels: true,
-					duration: 500,
-					labelThreshold: 0.01,
-					labelSunbeamLayout: true,
-          callback: function () {
-            d3.selectAll('.nv-pieLabels text').style('fill', 'white');
-          },
-					legend: {
-						margin: {
-							top: 5,
-							right: 35,
-							bottom: 5,
-							left: 0
-						}
-					},
-          tooltip: {
-            valueFormatter: function(d) {
-              return d3.format('d')(d);
-            }
-          },
-          color: function(d, i) {
-            return (d.data && d.data.color) || colors[i % colors.length];
-          }
-				},
-				title: {
-					enable: true,
-					text: "Song Play Count",
-					className: "h2"
-				}
-			};
+      $scope.options = Charts.getPieChartOptions();
 			songPlays.$loaded().then(function(fdata) {
-				$scope.data = countSongPlays(fdata);
+				$scope.data = Charts.getPieChartData(fdata);
 			});
 		} else if (graphType === 'line') {
 			$scope.options = {
@@ -135,10 +86,8 @@
           },
           yDomain: [0, 14],
           interactiveLayer: {
-            toolTip: {
-              headerFormatter: function(d) {
-                return d3.time.format('%x')(new Date(d));
-              }
+            tooltip: {
+              headerEnabled: false
             }
           },
           callback: function(chart){
@@ -166,5 +115,5 @@
 
 	angular
 		.module('blocmetrics')
-		.controller('GraphCtrl', ['$stateParams', '$firebaseArray', '$scope', GraphCtrl]);
+		.controller('GraphCtrl', ['$stateParams', '$firebaseArray', '$scope', 'Charts', GraphCtrl]);
 })();
