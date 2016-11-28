@@ -13,7 +13,8 @@
 				labelThreshold: 0.01,
 				labelSunbeamLayout: true,
         callback: function () {
-          d3.selectAll('.nv-pieLabels text').style('fill', 'white');
+          d3.selectAll('.nv-pieLabels text').style('font-size', '18px');
+          d3.selectAll('.nv-pieLabels text').style('font-weight', 'bold');
         },
 				legend: {
 					margin: {
@@ -118,7 +119,6 @@
         a.push(s);
         s = moment(s).add(1, "days").format();
       }
-      console.log(a);
       return a;
     };
 

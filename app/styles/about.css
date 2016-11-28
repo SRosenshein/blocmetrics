@@ -2,7 +2,7 @@
 	margin-left: 2rem;
 	font-size: 100%;
 	text-decoration: none;
-	color: white;
+	color: black;
 }
 
 .about-container .header {
@@ -12,5 +12,5 @@
 
 .about-container a {
 	font-weight: bold;
-	color: white;
+	color: black;
 }

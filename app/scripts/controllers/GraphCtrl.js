@@ -1,6 +1,6 @@
 (function() {
-	function GraphCtrl($stateParams, $firebaseArray, $scope, Charts) {
-		var graphType = $stateParams.graphType;
+	function GraphCtrl($stateParams, $firebaseArray, $scope, Charts, $location) {
+		$scope.graphType = $stateParams.graphType;
 		var ref = firebase.database().ref();
 		var songPlays = $firebaseArray(ref.child("songPlays"));
     var pageViews = ref.child("pageViews");
@@ -8,12 +8,12 @@
     var collectionViews = $firebaseArray(pageViews.orderByChild("name").equalTo("collection"));
     var albumViews = $firebaseArray(pageViews.orderByChild("name").equalTo("album"));
 
-		if (graphType === "pie"){
+		if ($scope.graphType === "pie"){
       $scope.options = Charts.getPieChartOptions();
 			songPlays.$loaded().then(function(fdata) {
 				$scope.data = Charts.getPieChartData(fdata);
 			});
-		} else if (graphType === 'line') {
+		} else if ($scope.graphType === 'line') {
 			$scope.options = Charts.getLineChartOptions();
       $scope.data = [];
       landingViews.$loaded().then(function(fdata) {
@@ -26,9 +26,13 @@
         $scope.data.push({values: Charts.getLineChartData(fdata), key: "Album Page", color: "#0000EE"});
       });
 		} // if {}
+
+		$scope.changeGraph = function() {
+			$location.path('/graphs/'+ $scope.graphType);
+		};
 	} // function GraphCtrl {}
 
 	angular
 		.module('blocmetrics')
-		.controller('GraphCtrl', ['$stateParams', '$firebaseArray', '$scope', 'Charts', GraphCtrl]);
+		.controller('GraphCtrl', ['$stateParams', '$firebaseArray', '$scope', 'Charts', '$location', GraphCtrl]);
 })();
