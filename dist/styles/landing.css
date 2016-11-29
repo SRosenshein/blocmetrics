@@ -2,7 +2,12 @@
 	background: transparent;
 }
 
-.blocjams {
+.blocjams-link {
 	text-decoration: none;
 	color: black;
+}
+
+.dashboard-btn {
+	margin-top: 2%;
+	padding: 18px;
 }

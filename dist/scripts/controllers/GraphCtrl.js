@@ -28,7 +28,7 @@
 		} // if {}
 
 		$scope.changeGraph = function() {
-			$location.path('/graphs/'+ $scope.graphType);
+			$location.path('/dashboard/'+ $scope.graphType);
 		};
 	} // function GraphCtrl {}
 

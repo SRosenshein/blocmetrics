@@ -16,14 +16,14 @@
 				url: '/about',
 				templateUrl: '/templates/about.html'
 			})
-			.state('graphs', {
-				url: '/graphs',
-				templateUrl: '/templates/graphs.html'
+			.state('dashboard', {
+				url: '/dashboard',
+				templateUrl: '/templates/dashboard.html'
 			})
 			.state('graph', {
 				templateUrl: '/templates/graph.html',
 				controller: 'GraphCtrl as graph',
-				url: '/graphs/:graphType'
+				url: '/dashboard/:graphType'
 			});
 	}
 

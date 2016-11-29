@@ -1,4 +1,6 @@
 .select-list {
 	width: 20%;
 	margin-left: 40px;
+	float: left;
+	font-size: 0.8rem;
 }
