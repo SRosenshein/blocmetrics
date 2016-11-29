@@ -1,3 +1,31 @@
-.dashboard-title {
-	color: red;
+.dashboard-head {
+	min-height: 10%;
+	position: relative;
+}
+
+.dashboard-head .dashboard-title {
+	width: 100%;
+	float: left;
+	margin-left: 40px;
+	font-size: 3rem;
+}
+
+.all-charts {
+	position: relative;
+}
+
+.chart {
+	position: relative;
+	padding: 2rem;
+	text-align: center;
+}
+
+.chart .chart-title {
+	font-size: 1.8rem;
+}
+
+.chart i {
+	font-size: 3.5rem;
+	color: rgba(240, 60, 160, 0.85);
+	padding: 0.8rem;
 }
